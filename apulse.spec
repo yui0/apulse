@@ -1,5 +1,5 @@
 %define name apulse
-%define version 0.1.8
+%define version 0.1.10
 %define release b1
 
 Name:		%{name}
