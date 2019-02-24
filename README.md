@@ -32,6 +32,11 @@ layer between PulseAudio applications and ALSA.
 Install
 =======
 
+You need ALSA libraries and GLib installed. On Debian-based distributions, they
+are in packages `libasound2-dev` and `libglib2.0-dev`.
+
+To build and install, run in source directory:
+
 ```
 $ mkdir build && cd build
 $ cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
@@ -39,12 +44,25 @@ $ make
 # make install
 ```
 
+That will create directory named `build`, and build there. It's possible to
+install just by running `make install` as `root`, as shown above. But you won't
+be able to uninstall installed files. That's why it's recommended to wrap files
+into a package. Use `checkinstall`, or some alternative.
+
 If you want 32-bit binaries on 64-bit machine (for example, for Skype), use:
 ```
 $ mkdir build && cd build
 $ CFLAGS=-m32 cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
 $ make
 # make install
+```
+
+Recent GLib versions use different `.pc` files for `i386` and `amd64`. To help
+`pkg-config` find 32-bit versions, use `PKG_CONFIG_PATH` variable.  So, on
+Debian it will be something like:
+
+```
+$ PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig CFLAGS=-m32 cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
 ```
 
 There is a way to configure where apulse libraries will be installed, via
@@ -160,6 +178,16 @@ predefined list of allowed paths, but ALSA devices are not included by
 default. Fortunately, it's possible to add those path by hand. Add "/dev/snd/"
 to "security.sandbox.content.write_path_whitelist" parameter in
 `about:config`. Note that trailing slash in "/dev/snd/" is required.
+
+Firefox 58 tabs crashing when trying to play audio
+--------------------------------------------------
+
+Firefox 58 (Nightly) tightened its sandbox a bit more. Now `ioctl()` calls are
+forbidden too, but are used by ALSA libraries. That causes sandbox violation
+with subsequent process termination. Exception can be added by setting parameter
+`security.sandbox.content.syscall_whitelist` in `about:config`. That field
+accepts a comma separated list of system call numbers. Add there `16` for
+x86-64, or `54` for x86 or ARM.
 
 License
 =======

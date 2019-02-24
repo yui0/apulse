@@ -1,5 +1,5 @@
 %define name apulse
-%define version 0.1.10
+%define version 0.1.12
 %define release b1
 
 Name:		%{name}
@@ -25,6 +25,11 @@ make
 
 %install
 make install
+cat > %{buildroot}/usr/bin/apulse <<EOM
+#!/bin/sh
+APULSEPATH="/usr/lib64"
+LD_LIBRARY_PATH=$APULSEPATH${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} exec "$@"
+EOM
 
 %clean
 [ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
