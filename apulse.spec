@@ -28,7 +28,7 @@ make install
 cat > %{buildroot}/usr/bin/apulse <<EOM
 #!/bin/sh
 APULSEPATH="/usr/lib64"
-LD_LIBRARY_PATH=$APULSEPATH${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} exec "$@"
+LD_LIBRARY_PATH=\$APULSEPATH\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH} exec "\$@"
 EOM
 
 %clean
